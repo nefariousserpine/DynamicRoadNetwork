@@ -9,10 +9,10 @@ test_event.exe
 Thumbs.db
 
 # Ignore build output directories
-/build/
-/dist/
-/bin/
-/obj/
+build/
+dist/
+bin/
+obj/
 
 # Ignore common IDE/editor files
 .vscode/
