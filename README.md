@@ -26,7 +26,7 @@ This project uses C++17 or later.
 g++ -std=c++17 src/main.cpp src/Graph.cpp src/DynamicDijkstra.cpp src/EventHandler.cpp -o dynroad
 ```
 
-### To execute
+### Execute
 
 ```bash
 ./dynroad
@@ -46,7 +46,7 @@ g++ -std=c++17 -Wall -Wextra -Isrc -o test_dijkstra tests/test_dijkstra.cpp src/
 g++ -std=c++17 -Wall -Wextra -Isrc -o test_events tests/test_events.cpp src/EventHandler.cpp src/DynamicDijkstra.cpp src/Graph.cpp
 ```
 
-### To execute
+### Execute
 ```bash
 ./test_graph
 ./test_dijkstra
