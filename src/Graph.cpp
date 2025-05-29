@@ -149,6 +149,7 @@ bool Graph::edge_exists(int u, int v) const {
  * for each node u that has an adjacency entry.
  */
 void Graph::print_graph() const {
+    std::cout << "Node: (neighbour_node, edge_weight)" << std::endl;
     for (const auto& entry : adjList_) {
         int u = entry.first;
         const auto& neighbors = entry.second;
