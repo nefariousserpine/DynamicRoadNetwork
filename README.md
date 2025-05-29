@@ -26,9 +26,9 @@ This project uses C++17 or later.
 g++ -std=c++17 src/main.cpp src/Graph.cpp src/DynamicDijkstra.cpp src/EventHandler.cpp -o dynroad
 ```
 
-### Test Instructions
+## Test Instructions
 
-## Running Tests
+### Running Tests
 
 To compile and run the test programs, follow these steps:
 
