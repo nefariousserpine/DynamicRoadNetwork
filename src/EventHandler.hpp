@@ -38,6 +38,12 @@ public:
      */
     void run_event_loop();
 
+    /**
+     * @brief Method intended for unit tests only
+     * Outputs results to stdout.
+     */
+    void test_process_command(const std::string& cmd);
+
 private:
     Graph& graph_;                 ///< Reference to graph instance.
     DynamicDijkstra& dijkstra_;   ///< Reference to dynamic shortest-path module.

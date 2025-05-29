@@ -31,6 +31,10 @@ void EventHandler::run_event_loop() {
     cout << "Exiting event loop." << endl;
 }
 
+void EventHandler::test_process_command(const string& cmd) {
+    process_command(cmd);
+}
+
 void EventHandler::process_command(const string& line) {
     // Tokenize by whitespace
     istringstream iss(line);
