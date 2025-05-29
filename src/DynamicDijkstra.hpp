@@ -67,10 +67,10 @@ public:
     void update_edge(int u, int v, int new_weight);
 
 private:
-    Graph& graph_;                             ///< Reference to the underlying graph.
-    int source_;                               ///< The last‐used source ID (or –1 if none).
-    std::unordered_map<int,int> dist_;         ///< Current distance from source_ to each node.
-    std::unordered_map<int,int> parent_;       ///< parent_[v] = predecessor of v in the SPT.
+    Graph& graph_;                             // Reference to the underlying graph.
+    int source_;                               // The last‐used source ID (or –1 if none).
+    std::unordered_map<int,int> dist_;         // Current distance from source_ to each node.
+    std::unordered_map<int,int> parent_;       // parent_[v] = predecessor of v in the SPT.
 
     /**
      * @brief Find the current weight of edge (u,v) by scanning graph_.get_neighbors(u).

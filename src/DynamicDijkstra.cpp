@@ -2,17 +2,14 @@
 #include <queue>
 #include <limits>
 #include <stdexcept>
-#include <algorithm>  // for std::reverse
-#include <functional> // for std::greater
-#include <utility>    // for std::pair
+#include <algorithm>  
+#include <functional> 
+#include <utility>    
 
 using namespace std;
 
 DynamicDijkstra::DynamicDijkstra(Graph& graph)
-    : graph_(graph), source_(-1)
-{
-    // Nothing else to do here.
-}
+    : graph_(graph), source_(-1) {}
 
 void DynamicDijkstra::compute(int source) {
     source_ = source;
@@ -73,7 +70,7 @@ vector<int> DynamicDijkstra::get_shortest_path(int target) const {
         path.push_back(cur);
         auto pit = parent_.find(cur);
         if (pit == parent_.end()) {
-            // No predecessor => something’s wrong or disconnected
+            // No predecessor -> disconnected
             path.clear();
             return path;
         }
@@ -97,10 +94,10 @@ int DynamicDijkstra::get_edge_weight(int u, int v) const {
 }
 
 void DynamicDijkstra::update_edge(int u, int v, int new_weight) {
-    // 1) Retrieve old weight (throws if edge doesn’t exist)
+    // Retrieve old weight (throws if edge doesn’t exist)
     int old_weight = get_edge_weight(u, v);
 
-    // 2) Propagate change to underlying graph
+    // Propagate change to underlying graph
     graph_.update_weight(u, v, new_weight);
 
     // If compute(...) has never been called, there is no SPT to maintain
@@ -108,7 +105,7 @@ void DynamicDijkstra::update_edge(int u, int v, int new_weight) {
         return;
     }
 
-    // 3) If the edge weight decreased, attempt localized “decrease‐push”
+    // If the edge weight decreased, attempt localized “decrease‐push”
     if (new_weight < old_weight) {
         // Check if going source_ → ... → u → v yields a shorter distance to v
         auto it_u = dist_.find(u);
@@ -189,9 +186,9 @@ void DynamicDijkstra::update_edge(int u, int v, int new_weight) {
             }
         }
     }
-    // 4) If the edge weight increased, and (u,v) was used in the current SPT,
-    //    we simply recompute from scratch. This is simpler (though less efficient)
-    //    than a full “decremental SPT repair” algorithm.
+    // If the edge weight increased, and (u,v) was used in the current SPT,
+    // we simply recompute from scratch. This is simpler (though less efficient)
+    // than a full “decremental SPT repair” algorithm.
     else if (new_weight > old_weight) {
         // If v’s parent is u, or u’s parent is v, the SPT is invalidated
         auto pit_v = parent_.find(v);
@@ -204,7 +201,7 @@ void DynamicDijkstra::update_edge(int u, int v, int new_weight) {
             // Recompute entire SPT from source_
             compute(source_);
         }
-        // Otherwise, if (u,v) wasn’t on the tree, no distances change
+        // Otherwise, if (u, v) wasn’t on the tree, no distances change
     }
     // If new_weight == old_weight, nothing changes in distances
 }
