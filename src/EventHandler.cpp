@@ -151,6 +151,21 @@ void EventHandler::process_command(const string& line) {
             }
             cout << endl;
         }
+        else if (cmd == "EXISTS") {
+            // Usage: EXISTS u v
+            if (tokens.size() != 3) {
+                cout << "ERROR: EXISTS requires 2 arguments: u v" << endl;
+                return;
+            }
+            int u = stoi(tokens[1]);
+            int v = stoi(tokens[2]);
+            if (graph_.edge_exists(u, v)) {
+                cout << "Edge (" << u << ", " << v << ") exists." << endl;
+            }
+            else {
+                cout << "Edge (" << u << ", " << v << ") does not exist." << endl;
+            }
+        }
         else if (cmd == "PRINT") {
             // Usage: PRINT
             graph_.print_graph();
@@ -169,24 +184,24 @@ void EventHandler::process_command(const string& line) {
         cout << "ERROR: Integer argument out of range." << endl;
     }
     catch (const exception& e) {
-        cout << "ERROR: Exception: " << e.what() << endl;
+        cout << "ERROR: Exception caught: " << e.what() << endl;
     }
 }
 
 void EventHandler::print_help() const {
-    cout << "\nSupported commands:\n"
-         << "ADD u v w    — Add an undirected edge (u, v) with weight w.\n"
-         << "REMOVE u v   — Remove the undirected edge (u, v).\n"
-         << "UPDATE u v w — Update the weight of edge (u, v) to w.\n"
-         << "QUERY u v    — Print shortest‐path distance & nodes from u to v.\n"
-         << "PRINT        — Print the current adjacency list of the graph.\n"
-         << "HELP         — Show this help message.\n"
-         << "EXIT         — Exit the event loop (or use EOF).\n\n";
+    cout << "Supported commands:" << endl;
+    cout << "  ADD u v w       - Add undirected edge (u,v) with weight w." << endl;
+    cout << "  REMOVE u v      - Remove undirected edge (u,v)." << endl;
+    cout << "  UPDATE u v w    - Update edge (u,v) weight to w." << endl;
+    cout << "  QUERY u v       - Print shortest-path distance and nodes from u to v." << endl;
+    cout << "  EXISTS u v      - Check if undirected edge (u,v) exists." << endl;
+    cout << "  PRINT           - Print current graph adjacency list." << endl;
+    cout << "  HELP            - Show this help message." << endl;
+    cout << "  EXIT            - Exit event loop." << endl;
 }
 
 void EventHandler::ensure_spt(int src) {
-    // If we haven’t computed, or the source changed, or SPT was invalidated,
-    // run a fresh Dijkstra from src.
+    // If last computed SPT source differs or invalid, recompute SPT from scratch
     if (!spt_valid_ || last_source_ != src) {
         dijkstra_.compute(src);
         last_source_ = src;

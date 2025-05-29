@@ -6,68 +6,60 @@
 #include <string>
 
 /**
- * @brief Parses and handles dynamic events on the graph and shortest‐path module.
+ * @brief Handles dynamic graph events and shortest-path queries.
  * 
- * Supported commands (one per line, case‐sensitive):
- *   ADD u v w       — Add an undirected edge (u, v) with weight w.
- *   REMOVE u v      — Remove the undirected edge (u, v).
- *   UPDATE u v w    — Update the weight of existing edge (u, v) to w.
- *   QUERY u v       — Print the shortest‐path distance and node sequence from u to v.
- *   PRINT           — Print the current adjacency list of the graph.
- *   HELP            — Print a brief help message.
- *   EXIT            — Terminate the event loop (optional; also stops on EOF).
+ * Supports commands:
+ *   ADD u v w       - Add an undirected edge (u, v) with weight w.
+ *   REMOVE u v      - Remove the undirected edge (u, v).
+ *   UPDATE u v w    - Update weight of edge (u, v) to w.
+ *   QUERY u v       - Print shortest-path distance and nodes from u to v.
+ *   EXISTS u v      - Check if undirected edge (u, v) exists.
+ *   PRINT           - Print current graph adjacency list.
+ *   HELP            - Print help message.
+ *   EXIT            - Exit event loop (also ends on EOF).
  * 
- * Notes on dynamic handling:
- * - After an UPDATE (weight change), if a shortest‐path tree (SPT) is already
- *   computed, we attempt a localized repair via DynamicDijkstra::update_edge().
- *   If that fails (e.g. edge not found), we defer to a full recompute on next QUERY.
- * - After ADD or REMOVE, we mark the SPT as invalid and force a full recompute
- *   on the next QUERY, because dynamic insertion/deletion is not fully supported.
+ * Notes:
+ * - After UPDATE, attempts localized SPT update via DynamicDijkstra::update_edge().
+ *   If that fails, marks SPT invalid for full recompute on next QUERY.
+ * - After ADD or REMOVE, marks SPT invalid to force full recompute on next QUERY.
  */
 class EventHandler {
 public:
     /**
-     * @brief Construct a handler over the given graph and DynamicDijkstra module.
-     * @param g  Reference to an existing Graph instance.
-     * @param d  Reference to an existing DynamicDijkstra instance (wrapping the same Graph).
+     * @brief Construct EventHandler over given Graph and DynamicDijkstra.
+     * @param g Reference to existing Graph instance.
+     * @param d Reference to existing DynamicDijkstra instance.
      */
     EventHandler(Graph& g, DynamicDijkstra& d);
 
     /**
-     * @brief Start reading commands from stdin (std::cin) until EOF or EXIT.
-     * 
-     * For each line, parse the command and invoke the corresponding graph or
-     * dynamic‐Dijkstra operation. Output is printed to stdout.
+     * @brief Run interactive event loop reading commands from stdin.
+     * Outputs results to stdout.
      */
     void run_event_loop();
 
 private:
-    Graph& graph_;
-    DynamicDijkstra& dijkstra_;
+    Graph& graph_;                 ///< Reference to graph instance.
+    DynamicDijkstra& dijkstra_;   ///< Reference to dynamic shortest-path module.
 
-    int last_source_;              ///< The source of the last successful SPT compute (or -1).
-    bool spt_valid_;               ///< True if current SPT (in DynamicDijkstra) is valid.
+    int last_source_;              ///< Source node of last computed SPT (-1 if none).
+    bool spt_valid_;               ///< True if current shortest-path tree is valid.
 
     /**
-     * @brief Parse one line of input and dispatch the appropriate operation.
-     * 
-     * @param line  A single line of text (one command).
+     * @brief Parse and execute one input command line.
+     * @param line Single input command line.
      */
     void process_command(const std::string& line);
 
     /**
-     * @brief Print usage instructions to stdout.
+     * @brief Print usage help message.
      */
     void print_help() const;
 
     /**
-     * @brief Attempt to ensure that the SPT is valid for source = src.
-     * 
-     * If the last_source_ differs from src, or spt_valid_ is false, recompute
-     * the SPT via dijkstra_.compute(src). Updates last_source_ and spt_valid_.
-     * Otherwise, do nothing (reuse existing SPT).
-     * 
-     * @param src  Desired SPT source node.
+     * @brief Ensure SPT is computed and valid for given source.
+     * If needed, recomputes SPT from scratch.
+     * @param src Source node for shortest-path tree.
      */
     void ensure_spt(int src);
 };
