@@ -24,6 +24,9 @@ This project uses C++17 or later.
 
 ```bash
 g++ -std=c++17 src/main.cpp src/Graph.cpp src/DynamicDijkstra.cpp src/EventHandler.cpp -o dynroad
+```
+
+### Test Instructions
 
 ## Running Tests
 
