@@ -7,7 +7,7 @@ int main() {
     // Instantiate the core graph
     Graph graph;
 
-    // Wrap it in our DynamicDijkstra module
+    // Wrap it in DynamicDijkstra module
     DynamicDijkstra dijkstra(graph);
 
     // Create the event handler that reads commands from stdin
