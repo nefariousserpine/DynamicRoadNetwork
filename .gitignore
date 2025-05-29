@@ -15,8 +15,3 @@ Thumbs.db
 .vscode/
 .idea/
 *.log
-
-# Ignore Python cache files (if you use Python)
-__pycache__/
-*.pyc
-
