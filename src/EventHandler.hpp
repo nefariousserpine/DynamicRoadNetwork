@@ -45,11 +45,11 @@ public:
     void test_process_command(const std::string& cmd);
 
 private:
-    Graph& graph_;                 ///< Reference to graph instance.
-    DynamicDijkstra& dijkstra_;   ///< Reference to dynamic shortest-path module.
+    Graph& graph_;                 // Reference to graph instance.
+    DynamicDijkstra& dijkstra_;   // Reference to dynamic shortest-path module.
 
-    int last_source_;              ///< Source node of last computed SPT (-1 if none).
-    bool spt_valid_;               ///< True if current shortest-path tree is valid.
+    int last_source_;              // Source node of last computed SPT (-1 if none).
+    bool spt_valid_;               // True if current shortest-path tree is valid.
 
     /**
      * @brief Parse and execute one input command line.

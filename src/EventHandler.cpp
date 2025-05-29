@@ -22,7 +22,6 @@ void EventHandler::run_event_loop() {
         if (line.empty()) {
             continue;
         }
-        // If user typed "EXIT", break
         if (line == "EXIT") {
             break;
         }

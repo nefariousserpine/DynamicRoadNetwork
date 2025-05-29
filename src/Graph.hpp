@@ -67,7 +67,7 @@ public:
      * 
      * For each node u present in the adjacency map, prints a line:
      *   u: (v1, w1) (v2, w2) ...
-     * indicating edges u→v1 with weight w1, etc.
+     * indicating edges u -> v1 with weight w1, etc.
      */
     void print_graph() const;
 
