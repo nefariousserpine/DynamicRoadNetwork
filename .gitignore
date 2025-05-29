@@ -2,7 +2,7 @@
 dynroad.exe
 test_graph.exe
 test_dijkstra.exe
-test_event.exe
+test_events.exe
 
 # Ignore OS generated files
 .DS_Store
