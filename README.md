@@ -24,3 +24,14 @@ This project uses C++17 or later.
 
 ```bash
 g++ -std=c++17 src/main.cpp src/Graph.cpp src/DynamicDijkstra.cpp src/EventHandler.cpp -o dynroad
+
+## Running Tests
+
+To compile and run the test programs, follow these steps:
+
+### Compile individual tests
+
+```bash
+g++ -std=c++17 -Wall -Wextra -Isrc -o test_graph tests/test_graph.cpp src/Graph.cpp
+g++ -std=c++17 -Wall -Wextra -Isrc -o test_dijkstra tests/test_dijkstra.cpp src/DynamicDijkstra.cpp src/Graph.cpp
+g++ -std=c++17 -Wall -Wextra -Isrc -o test_events tests/test_events.cpp src/EventHandler.cpp src/DynamicDijkstra.cpp src/Graph.cpp

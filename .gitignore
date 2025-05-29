@@ -1,5 +1,8 @@
-# Ignore dynroad.exe executable
+# Ignore .exe executable
 dynroad.exe
+test_graph.exe
+test_dijkstra.exe
+test_event.exe
 
 # Ignore OS generated files
 .DS_Store
