@@ -3,17 +3,13 @@
 #include <algorithm>    
 #include <stdexcept>    
 
-// Definition of the static empty neighbors vector
+// Initialize the static empty neighbors vector
 const std::vector<std::pair<int,int>> Graph::EMPTY_NEIGHBORS_ = {};
 
-/**
- * @brief Add or update an undirected edge between u and v with the specified weight.
- *
- * If an edge (u, v) already exists in either adjacency list, its weight is updated.
- * Otherwise, a new entry is appended to both u’s and v’s adjacency vectors.
- */
+// Adds or updates an undirected edge between nodes u and v with the given weight.
+// If the edge already exists, its weight is updated; otherwise, it is added.
 void Graph::add_edge(int u, int v, int weight) {
-    auto& neighbors_u = adjList_[u];  // This creates an empty list for u if it does not exist
+    auto& neighbors_u = adjList_[u];
     bool updated_u = false;
     for (auto& p : neighbors_u) {
         if (p.first == v) {
@@ -23,11 +19,10 @@ void Graph::add_edge(int u, int v, int weight) {
         }
     }
     if (!updated_u) {
-        // Edge did not exist, so add it
         neighbors_u.emplace_back(v, weight);
     }
 
-    auto& neighbors_v = adjList_[v];  // This creates an empty list for v if it does not exist
+    auto& neighbors_v = adjList_[v];
     bool updated_v = false;
     for (auto& p : neighbors_v) {
         if (p.first == u) {
@@ -37,59 +32,41 @@ void Graph::add_edge(int u, int v, int weight) {
         }
     }
     if (!updated_v) {
-        // Edge did not exist, so add it
         neighbors_v.emplace_back(u, weight);
     }
 }
 
-/**
- * @brief Remove the undirected edge between u and v.
- *
- * If node u or node v does not exist, or if the edge is not present, does nothing.
- */
+// Removes the undirected edge between nodes u and v.
+// If the edge does not exist, this has no effect.
 void Graph::remove_edge(int u, int v) {
-    // ----- Remove v from u's adjacency list -----
     auto it_u = adjList_.find(u);
     if (it_u != adjList_.end()) {
         auto& neighbors_u = it_u->second;
         neighbors_u.erase(
-            std::remove_if(
-                neighbors_u.begin(),
-                neighbors_u.end(),
-                [v](const std::pair<int,int>& p) { return p.first == v; }
-            ),
+            std::remove_if(neighbors_u.begin(), neighbors_u.end(),
+                           [v](const std::pair<int,int>& p) { return p.first == v; }),
             neighbors_u.end()
         );
-        // erase u if no neighbors remain:
         if (neighbors_u.empty()) adjList_.erase(it_u);
     }
 
-    // ----- Remove u from v's adjacency list -----
     auto it_v = adjList_.find(v);
     if (it_v != adjList_.end()) {
         auto& neighbors_v = it_v->second;
         neighbors_v.erase(
-            std::remove_if(
-                neighbors_v.begin(),
-                neighbors_v.end(),
-                [u](const std::pair<int,int>& p) { return p.first == u; }
-            ),
+            std::remove_if(neighbors_v.begin(), neighbors_v.end(),
+                           [u](const std::pair<int,int>& p) { return p.first == u; }),
             neighbors_v.end()
         );
-        // erase v if no neighbors remain:
         if (neighbors_v.empty()) adjList_.erase(it_v);
     }
 }
 
-/**
- * @brief Update the weight of the existing undirected edge (u, v).
- *
- * If the edge does not exist in either adjacency list, throws a runtime_error.
- */
+// Updates the weight of an existing undirected edge between u and v.
+// Throws a runtime error if the edge does not exist.
 void Graph::update_weight(int u, int v, int new_weight) {
     bool found = false;
 
-    // ----- Update weight in u's adjacency list -----
     auto it_u = adjList_.find(u);
     if (it_u != adjList_.end()) {
         for (auto& p : it_u->second) {
@@ -101,7 +78,6 @@ void Graph::update_weight(int u, int v, int new_weight) {
         }
     }
 
-    // ----- Update weight in v's adjacency list -----
     auto it_v = adjList_.find(v);
     if (it_v != adjList_.end()) {
         for (auto& p : it_v->second) {
@@ -120,19 +96,13 @@ void Graph::update_weight(int u, int v, int new_weight) {
     }
 }
 
-/**
- * @brief Check whether an undirected edge exists between u and v.
- *
- * @param u  One endpoint
- * @param v  The other endpoint
- * @return true if (u, v) exists; false otherwise.
- */
+// Returns true if an undirected edge between u and v exists; false otherwise.
 bool Graph::edge_exists(int u, int v) const {
     auto it_u = adjList_.find(u);
     if (it_u == adjList_.end()) {
         return false;
     }
-    // Scan u’s neighbors for v
+
     for (const auto& p : it_u->second) {
         if (p.first == v) {
             return true;
@@ -141,13 +111,8 @@ bool Graph::edge_exists(int u, int v) const {
     return false;
 }
 
-/**
- * @brief Print the entire adjacency list representation to stdout.
- *
- * Format:
- *   u: (v1, w1) (v2, w2) ...
- * for each node u that has an adjacency entry.
- */
+// Prints the current adjacency list of the graph.
+// Each line represents a node and its connected neighbors with edge weights.
 void Graph::print_graph() const {
     std::cout << "Node: (neighbour_node, edge_weight)" << std::endl;
     for (const auto& entry : adjList_) {
@@ -155,20 +120,14 @@ void Graph::print_graph() const {
         const auto& neighbors = entry.second;
         std::cout << u << ":";
         for (const auto& p : neighbors) {
-            int v = p.first;
-            int w = p.second;
-            std::cout << " (" << v << ", " << w << ")";
+            std::cout << " (" << p.first << ", " << p.second << ")";
         }
         std::cout << std::endl;
     }
 }
 
-/**
- * @brief Retrieve the adjacency list of node u.
- *
- * Returns a const reference to a vector of (neighbor, weight) pairs.
- * If u has no entry in the adjacency map, returns a reference to a static empty vector.
- */
+// Returns the list of neighbors for a given node u.
+// If u has no neighbors, returns a reference to a static empty vector.
 const std::vector<std::pair<int,int>>& Graph::get_neighbors(int u) const {
     auto it = adjList_.find(u);
     if (it != adjList_.end()) {
