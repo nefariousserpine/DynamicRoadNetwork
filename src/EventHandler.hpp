@@ -6,67 +6,48 @@
 #include <string>
 
 /**
- * @brief Handles dynamic graph events and shortest-path queries.
+ * Handles dynamic graph operations and shortest path queries.
  * 
- * Supports commands:
- *   ADD u v w       - Add an undirected edge (u, v) with weight w.
- *   REMOVE u v      - Remove the undirected edge (u, v).
- *   UPDATE u v w    - Update weight of edge (u, v) to w.
- *   QUERY u v       - Print shortest-path distance and nodes from u to v.
- *   EXISTS u v      - Check if undirected edge (u, v) exists.
- *   PRINT           - Print current graph adjacency list.
- *   HELP            - Print help message.
- *   EXIT            - Exit event loop (also ends on EOF).
+ * Supported commands:
+ *   ADD u v w       - Add undirected edge (u, v) with weight w
+ *   REMOVE u v      - Remove undirected edge (u, v)
+ *   UPDATE u v w    - Update weight of edge (u, v) to w
+ *   QUERY u v       - Print shortest-path distance and path from u to v
+ *   EXISTS u v      - Check if edge (u, v) exists
+ *   PRINT           - Print the current adjacency list
+ *   HELP            - Show usage help message
+ *   EXIT            - Exit the event loop (also ends on EOF)
  * 
  * Notes:
- * - After UPDATE, attempts localized SPT update via DynamicDijkstra::update_edge().
- *   If that fails, marks SPT invalid for full recompute on next QUERY.
- * - After ADD or REMOVE, marks SPT invalid to force full recompute on next QUERY.
+ * - UPDATE tries a localized shortest path tree (SPT) repair using DynamicDijkstra::update_edge().
+ *   If repair fails, marks SPT as invalid to trigger full recomputation on next QUERY.
+ * - ADD and REMOVE always invalidate the current SPT.
  */
 class EventHandler {
 public:
-    /**
-     * @brief Construct EventHandler over given Graph and DynamicDijkstra.
-     * @param g Reference to existing Graph instance.
-     * @param d Reference to existing DynamicDijkstra instance.
-     */
+    // Constructs the event handler with references to the graph and the dynamic Dijkstra module.
     EventHandler(Graph& g, DynamicDijkstra& d);
 
-    /**
-     * @brief Run interactive event loop reading commands from stdin.
-     * Outputs results to stdout.
-     */
+    // Runs an interactive loop to read commands from standard input and execute them.
     void run_event_loop();
 
-    /**
-     * @brief Method intended for unit tests only
-     * Outputs results to stdout.
-     */
+    // For unit testing: runs a single command (prints output to stdout).
     void test_process_command(const std::string& cmd);
 
 private:
-    Graph& graph_;                 // Reference to graph instance.
-    DynamicDijkstra& dijkstra_;   // Reference to dynamic shortest-path module.
+    Graph& graph_;                // Reference to the underlying graph.
+    DynamicDijkstra& dijkstra_;  // Reference to the dynamic Dijkstra module.
 
-    int last_source_;              // Source node of last computed SPT (-1 if none).
-    bool spt_valid_;               // True if current shortest-path tree is valid.
+    int last_source_;            // Last source node used for SPT computation (-1 if none).
+    bool spt_valid_;             // Whether the current shortest path tree is valid.
 
-    /**
-     * @brief Parse and execute one input command line.
-     * @param line Single input command line.
-     */
+    // Parses and executes a single command line.
     void process_command(const std::string& line);
 
-    /**
-     * @brief Print usage help message.
-     */
+    // Displays supported commands and usage.
     void print_help() const;
 
-    /**
-     * @brief Ensure SPT is computed and valid for given source.
-     * If needed, recomputes SPT from scratch.
-     * @param src Source node for shortest-path tree.
-     */
+    // Ensures that the SPT is valid for a given source; recomputes if needed.
     void ensure_spt(int src);
 };
 
