@@ -4,18 +4,16 @@
 #include <vector>
 #include <limits>
 
-using namespace std;
-
 EventHandler::EventHandler(Graph& g, DynamicDijkstra& d)
     : graph_(g), dijkstra_(d), last_source_(-1), spt_valid_(false)
 {
 }
 
 void EventHandler::run_event_loop() {
-    string line;
-    cout << "Enter commands (HELP for list). Type EXIT or <EOF> to quit." << endl;
+    std::string line;
+    std::cout << "Enter commands (HELP for list). Type EXIT or <EOF> to quit." << std::endl;
     while (true) {
-        if (!std::getline(cin, line)) {
+        if (!std::getline(std::cin, line)) {
             // EOF reached
             break;
         }
@@ -27,18 +25,17 @@ void EventHandler::run_event_loop() {
         }
         process_command(line);
     }
-    cout << "Exiting event loop." << endl;
+    std::cout << "Exiting event loop." << std::endl;
 }
 
-void EventHandler::test_process_command(const string& cmd) {
+void EventHandler::test_process_command(const std::string& cmd) {
     process_command(cmd);
 }
 
-void EventHandler::process_command(const string& line) {
-    // Tokenize by whitespace
-    istringstream iss(line);
-    vector<string> tokens;
-    string tok;
+void EventHandler::process_command(const std::string& line) {
+    std::istringstream iss(line);
+    std::vector<std::string> tokens;
+    std::string tok;
     while (iss >> tok) {
         tokens.push_back(tok);
     }
@@ -46,54 +43,48 @@ void EventHandler::process_command(const string& line) {
         return;
     }
 
-    const string& cmd = tokens[0];
+    const std::string& cmd = tokens[0];
 
     try {
         if (cmd == "ADD") {
-            // Usage: ADD u v w
             if (tokens.size() != 4) {
-                cout << "ERROR: ADD requires 3 arguments: u v w" << endl;
+                std::cout << "ERROR: ADD requires 3 arguments: u v w" << std::endl;
                 return;
             }
-            int u = stoi(tokens[1]);
-            int v = stoi(tokens[2]);
-            int w = stoi(tokens[3]);
+            int u = std::stoi(tokens[1]);
+            int v = std::stoi(tokens[2]);
+            int w = std::stoi(tokens[3]);
             graph_.add_edge(u, v, w);
-            // After insertion, any existing SPT is invalid
             spt_valid_ = false;
-            cout << "Added edge (" << u << ", " << v << ") with weight " << w << endl;
+            std::cout << "Added edge (" << u << ", " << v << ") with weight " << w << std::endl;
         }
         else if (cmd == "REMOVE") {
-            // Usage: REMOVE u v
             if (tokens.size() != 3) {
-                cout << "ERROR: REMOVE requires 2 arguments: u v" << endl;
+                std::cout << "ERROR: REMOVE requires 2 arguments: u v" << std::endl;
                 return;
             }
-            int u = stoi(tokens[1]);
-            int v = stoi(tokens[2]);
+            int u = std::stoi(tokens[1]);
+            int v = std::stoi(tokens[2]);
             if (!graph_.edge_exists(u, v)) {
-                cout << "ERROR: Edge (" << u << ", " << v << ") does not exist." << endl;
+                std::cout << "ERROR: Edge (" << u << ", " << v << ") does not exist." << std::endl;
                 return;
             }
             graph_.remove_edge(u, v);
-            // After deletion, any existing SPT is invalid
             spt_valid_ = false;
-            cout << "Removed edge (" << u << ", " << v << ")" << endl;
+            std::cout << "Removed edge (" << u << ", " << v << ")" << std::endl;
         }
         else if (cmd == "UPDATE") {
-            // Usage: UPDATE u v w
             if (tokens.size() != 4) {
-                cout << "ERROR: UPDATE requires 3 arguments: u v w" << endl;
+                std::cout << "ERROR: UPDATE requires 3 arguments: u v w" << std::endl;
                 return;
             }
-            int u = stoi(tokens[1]);
-            int v = stoi(tokens[2]);
-            int new_w = stoi(tokens[3]);
+            int u = std::stoi(tokens[1]);
+            int v = std::stoi(tokens[2]);
+            int new_w = std::stoi(tokens[3]);
             if (!graph_.edge_exists(u, v)) {
-                cout << "ERROR: Cannot update; edge (" << u << ", " << v << ") does not exist." << endl;
+                std::cout << "ERROR: Cannot update; edge (" << u << ", " << v << ") does not exist." << std::endl;
                 return;
             }
-            // Retrieve old weight for message (optional)
             int old_w = 0;
             {
                 const auto& nbrs = graph_.get_neighbors(u);
@@ -104,107 +95,98 @@ void EventHandler::process_command(const string& line) {
                     }
                 }
             }
-            // Update weight in the Graph
             graph_.update_weight(u, v, new_w);
 
-            // If we have a valid SPT, attempt localized update:
             if (spt_valid_) {
                 try {
                     dijkstra_.update_edge(u, v, new_w);
-                    cout << "Updated weight of edge (" << u << ", " << v << ") from "
-                         << old_w << " to " << new_w << " (SPT repaired)." << endl;
+                    std::cout << "Updated weight of edge (" << u << ", " << v << ") from "
+                              << old_w << " to " << new_w << " (SPT repaired)." << std::endl;
                 }
-                catch (const exception& e) {
-                    // If dynamic update failed, invalidate SPT for next query
+                catch (const std::exception& e) {
                     spt_valid_ = false;
-                    cout << "WARNING: Dynamic update failed; will recompute on next QUERY. ("
-                         << e.what() << ")" << endl;
+                    std::cout << "WARNING: Dynamic update failed; will recompute on next QUERY. ("
+                              << e.what() << ")" << std::endl;
                 }
             }
             else {
-                cout << "Updated weight of edge (" << u << ", " << v << ") from "
-                     << old_w << " to " << new_w << endl;
+                std::cout << "Updated weight of edge (" << u << ", " << v << ") from "
+                          << old_w << " to " << new_w << std::endl;
             }
         }
         else if (cmd == "QUERY") {
-            // Usage: QUERY u v
             if (tokens.size() != 3) {
-                cout << "ERROR: QUERY requires 2 arguments: u v" << endl;
+                std::cout << "ERROR: QUERY requires 2 arguments: u v" << std::endl;
                 return;
             }
-            int u = stoi(tokens[1]);
-            int v = stoi(tokens[2]);
-            // Ensure SPT rooted at u is valid
+            int u = std::stoi(tokens[1]);
+            int v = std::stoi(tokens[2]);
             ensure_spt(u);
 
             int dist = dijkstra_.get_distance(v);
-            if (dist == numeric_limits<int>::max()) {
-                cout << "NO PATH from " << u << " to " << v << endl;
+            if (dist == std::numeric_limits<int>::max()) {
+                std::cout << "NO PATH from " << u << " to " << v << std::endl;
                 return;
             }
-            vector<int> path = dijkstra_.get_shortest_path(v);
-            // Print distance and path
-            cout << "Distance from " << u << " to " << v << " = " << dist << endl;
-            cout << "Path: ";
+            std::vector<int> path = dijkstra_.get_shortest_path(v);
+            std::cout << "Distance from " << u << " to " << v << " = " << dist << std::endl;
+            std::cout << "Path: ";
             for (size_t i = 0; i < path.size(); ++i) {
-                cout << path[i];
+                std::cout << path[i];
                 if (i + 1 < path.size()) {
-                    cout << " -> ";
+                    std::cout << " -> ";
                 }
             }
-            cout << endl;
+            std::cout << std::endl;
         }
         else if (cmd == "EXISTS") {
-            // Usage: EXISTS u v
             if (tokens.size() != 3) {
-                cout << "ERROR: EXISTS requires 2 arguments: u v" << endl;
+                std::cout << "ERROR: EXISTS requires 2 arguments: u v" << std::endl;
                 return;
             }
-            int u = stoi(tokens[1]);
-            int v = stoi(tokens[2]);
+            int u = std::stoi(tokens[1]);
+            int v = std::stoi(tokens[2]);
             if (graph_.edge_exists(u, v)) {
-                cout << "Edge (" << u << ", " << v << ") exists." << endl;
+                std::cout << "Edge (" << u << ", " << v << ") exists." << std::endl;
             }
             else {
-                cout << "Edge (" << u << ", " << v << ") does not exist." << endl;
+                std::cout << "Edge (" << u << ", " << v << ") does not exist." << std::endl;
             }
         }
         else if (cmd == "PRINT") {
-            // Usage: PRINT
             graph_.print_graph();
         }
         else if (cmd == "HELP") {
             print_help();
         }
         else {
-            cout << "ERROR: Unknown command \"" << cmd << "\". Type HELP for list." << endl;
+            std::cout << "ERROR: Unknown command \"" << cmd << "\". Type HELP for list." << std::endl;
         }
     }
-    catch (const invalid_argument&) {
-        cout << "ERROR: Invalid integer argument in command." << endl;
+    catch (const std::invalid_argument&) {
+        std::cout << "ERROR: Invalid integer argument in command." << std::endl;
     }
-    catch (const out_of_range&) {
-        cout << "ERROR: Integer argument out of range." << endl;
+    catch (const std::out_of_range&) {
+        std::cout << "ERROR: Integer argument out of range." << std::endl;
     }
-    catch (const exception& e) {
-        cout << "ERROR: Exception caught: " << e.what() << endl;
+    catch (const std::exception& e) {
+        std::cout << "ERROR: Exception caught: " << e.what() << std::endl;
     }
 }
 
 void EventHandler::print_help() const {
-    cout << "Supported commands:" << endl;
-    cout << "  ADD u v w       - Add undirected edge (u,v) with weight w." << endl;
-    cout << "  REMOVE u v      - Remove undirected edge (u,v)." << endl;
-    cout << "  UPDATE u v w    - Update edge (u,v) weight to w." << endl;
-    cout << "  QUERY u v       - Print shortest-path distance and nodes from u to v." << endl;
-    cout << "  EXISTS u v      - Check if undirected edge (u,v) exists." << endl;
-    cout << "  PRINT           - Print current graph adjacency list." << endl;
-    cout << "  HELP            - Show this help message." << endl;
-    cout << "  EXIT            - Exit event loop." << endl;
+    std::cout << "Supported commands:" << std::endl;
+    std::cout << "  ADD u v w       - Add undirected edge (u,v) with weight w." << std::endl;
+    std::cout << "  REMOVE u v      - Remove undirected edge (u,v)." << std::endl;
+    std::cout << "  UPDATE u v w    - Update edge (u,v) weight to w." << std::endl;
+    std::cout << "  QUERY u v       - Print shortest-path distance and nodes from u to v." << std::endl;
+    std::cout << "  EXISTS u v      - Check if undirected edge (u,v) exists." << std::endl;
+    std::cout << "  PRINT           - Print current graph adjacency list." << std::endl;
+    std::cout << "  HELP            - Show this help message." << std::endl;
+    std::cout << "  EXIT            - Exit event loop." << std::endl;
 }
 
 void EventHandler::ensure_spt(int src) {
-    // If last computed SPT source differs or invalid, recompute SPT from scratch
     if (!spt_valid_ || last_source_ != src) {
         dijkstra_.compute(src);
         last_source_ = src;
