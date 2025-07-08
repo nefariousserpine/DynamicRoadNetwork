@@ -7,33 +7,21 @@
 const std::vector<std::pair<int,int>> Graph::EMPTY_NEIGHBORS_ = {};
 
 // Adds or updates an undirected edge between nodes u and v with the given weight.
-// If the edge already exists, its weight is updated; otherwise, it is added.
+// Throws runtime error, if the edge already exists
 void Graph::add_edge(int u, int v, int weight) {
     auto& neighbors_u = adjList_[u];
-    bool updated_u = false;
-    for (auto& p : neighbors_u) {
+    for (const auto& p : neighbors_u) {
         if (p.first == v) {
-            p.second = weight;
-            updated_u = true;
-            break;
+            throw std::runtime_error("Graph::add_edge(): edge (" 
+                                     + std::to_string(u) + ", " + std::to_string(v) 
+                                     + ") already exists with weight " + std::to_string(p.second));
         }
-    }
-    if (!updated_u) {
-        neighbors_u.emplace_back(v, weight);
     }
 
     auto& neighbors_v = adjList_[v];
-    bool updated_v = false;
-    for (auto& p : neighbors_v) {
-        if (p.first == u) {
-            p.second = weight;
-            updated_v = true;
-            break;
-        }
-    }
-    if (!updated_v) {
-        neighbors_v.emplace_back(u, weight);
-    }
+    // Add the undirected edge
+    neighbors_u.emplace_back(v, weight);
+    neighbors_v.emplace_back(u, weight);
 }
 
 // Removes the undirected edge between nodes u and v.
