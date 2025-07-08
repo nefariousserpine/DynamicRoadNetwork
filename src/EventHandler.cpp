@@ -101,7 +101,7 @@ void EventHandler::process_command(const std::string& line) {
             }
             int newW = static_cast<int>(w_ll);
 
-            // Check existence & fetch old weight
+            // Check existence and fetch old weight
             if (!graph_.edge_exists(u, v)) {
                 std::cout << "ERROR: Cannot update; edge (" << u << ", " << v << ") does not exist." << std::endl;
                 return;
