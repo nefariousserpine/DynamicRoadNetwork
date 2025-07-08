@@ -7,40 +7,42 @@
 
 /**
  * Maintains single-source shortest paths under edge-weight updates.
- * 
+ *
  * Supports:
  *  1) Initial Dijkstra run from a source node.
- *  2) Querying distances and paths to any target.
- *  3) Edge-weight updates with localized repair or full recomputation.
- * 
- * If an edge on the SPT increases in weight, we recompute Dijkstra.
- * If an edge's weight decreases, we perform a localized push update.
+ *  2) Querying distances and paths to any target (lazy repair).
+ *  3) Edge-weight updates with deferred recomputation.
+ *
+ * On any edge update, the SPT is marked dirty; the next distance/path
+ * query triggers a full Dijkstra recompute from the last source.
  */
 class DynamicDijkstra {
 public:
-    // Constructs the object over the given graph
     explicit DynamicDijkstra(Graph& graph);
 
-    // Runs Dijkstra from the given source node
+    // Runs (or reruns) Dijkstra from the given source node
     void compute(int source);
 
     // Returns distance from source to target, or INT_MAX if unreachable
-    int get_distance(int target) const;
+    // Triggers recompute if graph has been updated since last compute
+    int get_distance(int target);
 
-    // Returns shortest path [source, ..., target], or empty if unreachable
-    std::vector<int> get_shortest_path(int target) const;
+    // Returns shortest path [source,...,target], or empty if unreachable
+    // Triggers recompute if graph has been updated since last compute
+    std::vector<int> get_shortest_path(int target);
 
-    // Updates edge (u,v) to new_weight and repairs SPT accordingly
+    // Updates edge (u,v) to new_weight and defers SPT repair
     void update_edge(int u, int v, int new_weight);
 
 private:
-    Graph& graph_;                             // Underlying graph reference
-    int source_;                               // Last source used in compute()
-    std::unordered_map<int,int> dist_;         // Distance from source to each node
-    std::unordered_map<int,int> parent_;       // Shortest-path parent of each node
+    Graph& graph_;
+    int source_;
+    bool dirty_;    // true if SPT needs recompute before next query
+    std::unordered_map<int,int> dist_;
+    std::unordered_map<int,int> parent_;
 
-    // Returns weight of edge (u,v); throws if edge doesn't exist
+    // Fetches current weight of edge (u,v); throws if missing
     int get_edge_weight(int u, int v) const;
 };
 
-#endif 
+#endif // DYNAMICDIJKSTRA_HPP
