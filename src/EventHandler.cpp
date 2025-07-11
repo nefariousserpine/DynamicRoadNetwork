@@ -111,32 +111,11 @@ void EventHandler::process_command(const std::string& line) {
                 if (pr.first == v) { oldW = pr.second; break; }
             }
 
-            // Always update the graph
-            graph_.update_weight(u, v, newW);
+            // Base print message
+            std::cout << "Updated weight of edge (" << u << ", " << v << ") from " << oldW << " to " << newW;
 
-            // Print base message
-            std::cout << "Updated weight of edge (" << u << ", " << v << ") from "
-                      << oldW << " to " << newW;
-
-            // If SPT valid, decide repair vs. recompute
-            if (spt_valid_) {
-                if (newW > oldW) {
-                    // Weight increase: cannot repair locally
-                    spt_valid_ = false;
-                    std::cout << " (weight increase; will recompute on next QUERY)";
-                }
-                else {
-                    // Weight decrease or equal: attempt localized repair
-                    try {
-                        dijkstra_.update_edge(u, v, newW);
-                        std::cout << " (SPT repaired)";
-                    }
-                    catch (const std::exception& e) {
-                        spt_valid_ = false;
-                        std::cout << " (SPT repair failed; will recompute on next QUERY)";
-                    }
-                }
-            }
+            dijkstra_.update_edge(u, v, newW);
+            spt_valid_ = false;
             std::cout << std::endl;
         }
         else if (cmd == "QUERY") {
