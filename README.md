@@ -43,12 +43,10 @@ To compile and run the test programs, follow these steps:
 ```bash
 g++ -std=c++17 -Isrc -o test_graph tests/test_graph.cpp src/Graph.cpp
 g++ -std=c++17 -Isrc -o test_dijkstra tests/test_dijkstra.cpp src/DynamicDijkstra.cpp src/Graph.cpp
-g++ -std=c++17 -Isrc -o test_events tests/test_events.cpp src/EventHandler.cpp src/DynamicDijkstra.cpp src/Graph.cpp
 ```
 
 ### Execute
 ```bash
 ./test_graph
 ./test_dijkstra
-./test_events
 ```
