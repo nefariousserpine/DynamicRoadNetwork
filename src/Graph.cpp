@@ -6,8 +6,7 @@
 // Initialize the static empty neighbors vector
 const std::vector<std::pair<int,int>> Graph::EMPTY_NEIGHBORS_ = {};
 
-// Adds or updates an undirected edge between nodes u and v with the given weight.
-// Throws runtime error, if the edge already exists
+// Add an undirected edge between nodes u and v with the given weight.
 void Graph::add_edge(int u, int v, int weight) {
     auto& neighbors_u = adjList_[u];
     for (const auto& p : neighbors_u) {
@@ -24,8 +23,7 @@ void Graph::add_edge(int u, int v, int weight) {
     neighbors_v.emplace_back(u, weight);
 }
 
-// Removes the undirected edge between nodes u and v.
-// If the edge does not exist, this has no effect.
+// Remove the undirected edge between nodes u and v.
 void Graph::remove_edge(int u, int v) {
     auto it_u = adjList_.find(u);
     if (it_u != adjList_.end()) {
@@ -50,8 +48,7 @@ void Graph::remove_edge(int u, int v) {
     }
 }
 
-// Updates the weight of an existing undirected edge between u and v.
-// Throws a runtime error if the edge does not exist.
+// Update the weight of an existing undirected edge between u and v.
 void Graph::update_weight(int u, int v, int new_weight) {
     bool found = false;
 
@@ -84,7 +81,7 @@ void Graph::update_weight(int u, int v, int new_weight) {
     }
 }
 
-// Returns true if an undirected edge between u and v exists; false otherwise.
+// Return true if an undirected edge between u and v exists; false otherwise.
 bool Graph::edge_exists(int u, int v) const {
     auto it_u = adjList_.find(u);
     if (it_u == adjList_.end()) {
@@ -99,8 +96,8 @@ bool Graph::edge_exists(int u, int v) const {
     return false;
 }
 
-// Prints the current adjacency list of the graph.
-// Each line represents a node and its connected neighbors with edge weights.
+// Print the current adjacency list of the graph.
+// Node and its connected neighbors with edge weights.
 void Graph::print_graph() const {
     std::cout << "Node: (neighbour_node, edge_weight)" << std::endl;
     for (const auto& entry : adjList_) {
@@ -114,8 +111,8 @@ void Graph::print_graph() const {
     }
 }
 
-// Returns the list of neighbors for a given node u.
-// If u has no neighbors, returns a reference to a static empty vector.
+// Return the list of neighbors for a given node u.
+// If u has no neighbors, return a reference to a static empty vector.
 const std::vector<std::pair<int,int>>& Graph::get_neighbors(int u) const {
     auto it = adjList_.find(u);
     if (it != adjList_.end()) {
