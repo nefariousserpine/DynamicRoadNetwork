@@ -21,10 +21,6 @@ void EventHandler::run_event_loop() {
     std::cout << "Exiting event loop." << std::endl;
 }
 
-void EventHandler::test_process_command(const std::string& cmd) {
-    process_command(cmd);
-}
-
 void EventHandler::process_command(const std::string& line) {
     std::istringstream iss(line);
     std::vector<std::string> tokens;
