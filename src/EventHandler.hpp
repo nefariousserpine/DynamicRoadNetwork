@@ -22,7 +22,6 @@ public:
 
     void run_event_loop();
 
-    void test_process_command(const std::string& cmd);
 
 private:
     Graph& graph_;               
