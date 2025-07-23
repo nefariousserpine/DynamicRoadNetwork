@@ -1,4 +1,3 @@
-// EventHandler.cpp
 
 #include "EventHandler.hpp"
 #include <sstream>
@@ -36,7 +35,6 @@ void EventHandler::process_command(const std::string& line) {
     const auto& cmd = tokens[0];
     try {
         if (cmd == "ADD") {
-            // Usage: ADD u v w
             if (tokens.size() != 4) {
                 std::cout << "ERROR: ADD requires 3 arguments: u v w" << std::endl;
                 return;
@@ -54,7 +52,6 @@ void EventHandler::process_command(const std::string& line) {
             }
             int w = static_cast<int>(w_ll);
 
-            // Prevent duplicate edges
             if (graph_.edge_exists(u, v)) {
                 std::cout << "ERROR: Edge (" << u << ", " << v << ") already exists." << std::endl;
                 return;
@@ -65,7 +62,6 @@ void EventHandler::process_command(const std::string& line) {
             std::cout << "Added edge (" << u << ", " << v << ") with weight " << w << std::endl;
         }
         else if (cmd == "REMOVE") {
-            // Usage: REMOVE u v
             if (tokens.size() != 3) {
                 std::cout << "ERROR: REMOVE requires 2 arguments: u v" << std::endl;
                 return;
@@ -83,7 +79,6 @@ void EventHandler::process_command(const std::string& line) {
             std::cout << "Removed edge (" << u << ", " << v << ")" << std::endl;
         }
         else if (cmd == "UPDATE") {
-            // Usage: UPDATE u v w
             if (tokens.size() != 4) {
                 std::cout << "ERROR: UPDATE requires 3 arguments: u v w" << std::endl;
                 return;
@@ -101,7 +96,6 @@ void EventHandler::process_command(const std::string& line) {
             }
             int newW = static_cast<int>(w_ll);
 
-            // Check existence and fetch old weight
             if (!graph_.edge_exists(u, v)) {
                 std::cout << "ERROR: Cannot update; edge (" << u << ", " << v << ") does not exist." << std::endl;
                 return;
@@ -111,7 +105,6 @@ void EventHandler::process_command(const std::string& line) {
                 if (pr.first == v) { oldW = pr.second; break; }
             }
 
-            // Base print message
             std::cout << "Updated weight of edge (" << u << ", " << v << ") from " << oldW << " to " << newW;
 
             dijkstra_.update_edge(u, v, newW);
@@ -119,7 +112,6 @@ void EventHandler::process_command(const std::string& line) {
             std::cout << std::endl;
         }
         else if (cmd == "QUERY") {
-            // Usage: QUERY u v
             if (tokens.size() != 3) {
                 std::cout << "ERROR: QUERY requires 2 arguments: u v" << std::endl;
                 return;
@@ -144,7 +136,6 @@ void EventHandler::process_command(const std::string& line) {
             }
         }
         else if (cmd == "EXISTS") {
-            // Usage: EXISTS u v
             if (tokens.size() != 3) {
                 std::cout << "ERROR: EXISTS requires 2 arguments: u v" << std::endl;
                 return;
@@ -157,7 +148,6 @@ void EventHandler::process_command(const std::string& line) {
                       << std::endl;
         }
         else if (cmd == "PRINT") {
-            // Usage: PRINT
             graph_.print_graph();
         }
         else if (cmd == "HELP") {
