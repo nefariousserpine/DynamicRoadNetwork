@@ -1,4 +1,3 @@
-// DynamicDijkstra.cpp
 #include "DynamicDijkstra.hpp"
 #include <queue>
 #include <limits>
