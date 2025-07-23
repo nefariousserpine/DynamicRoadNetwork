@@ -3,10 +3,8 @@
 #include <algorithm>    
 #include <stdexcept>    
 
-// Initialize the static empty neighbors vector
 const std::vector<std::pair<int,int>> Graph::EMPTY_NEIGHBORS_ = {};
 
-// Add an undirected edge between nodes u and v with the given weight.
 void Graph::add_edge(int u, int v, int weight) {
     auto& neighbors_u = adjList_[u];
     for (const auto& p : neighbors_u) {
@@ -18,12 +16,10 @@ void Graph::add_edge(int u, int v, int weight) {
     }
 
     auto& neighbors_v = adjList_[v];
-    // Add the undirected edge
     neighbors_u.emplace_back(v, weight);
     neighbors_v.emplace_back(u, weight);
 }
 
-// Remove the undirected edge between nodes u and v.
 void Graph::remove_edge(int u, int v) {
     auto it_u = adjList_.find(u);
     if (it_u != adjList_.end()) {
@@ -48,7 +44,6 @@ void Graph::remove_edge(int u, int v) {
     }
 }
 
-// Update the weight of an existing undirected edge between u and v.
 void Graph::update_weight(int u, int v, int new_weight) {
     bool found = false;
 
@@ -81,7 +76,6 @@ void Graph::update_weight(int u, int v, int new_weight) {
     }
 }
 
-// Return true if an undirected edge between u and v exists; false otherwise.
 bool Graph::edge_exists(int u, int v) const {
     auto it_u = adjList_.find(u);
     if (it_u == adjList_.end()) {
@@ -96,8 +90,6 @@ bool Graph::edge_exists(int u, int v) const {
     return false;
 }
 
-// Print the current adjacency list of the graph.
-// Node and its connected neighbors with edge weights.
 void Graph::print_graph() const {
     std::cout << "Node: (neighbour_node, edge_weight)" << std::endl;
     for (const auto& entry : adjList_) {
@@ -111,8 +103,6 @@ void Graph::print_graph() const {
     }
 }
 
-// Return the list of neighbors for a given node u.
-// If u has no neighbors, return a reference to a static empty vector.
 const std::vector<std::pair<int,int>>& Graph::get_neighbors(int u) const {
     auto it = adjList_.find(u);
     if (it != adjList_.end()) {
